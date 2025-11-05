@@ -15,6 +15,10 @@
 import os
 import sys
 
+# 动态获取项目根目录
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+TOOLS_PATH = os.path.join(SCRIPT_DIR, "MediaEngine", "tools")
+
 
 def verify_file_structure():
     """验证文件结构"""
@@ -22,7 +26,7 @@ def verify_file_structure():
     print("1. 验证文件结构")
     print("="*70)
     
-    base_path = "/home/runner/work/BettaFish/BettaFish/MediaEngine/tools"
+    base_path = TOOLS_PATH
     
     required_files = [
         "search_base.py",
@@ -56,7 +60,7 @@ def verify_syntax():
     print("2. 验证 Python 语法")
     print("="*70)
     
-    base_path = "/home/runner/work/BettaFish/BettaFish/MediaEngine/tools"
+    base_path = TOOLS_PATH
     
     files_to_check = [
         "search_base.py",
@@ -93,7 +97,7 @@ def verify_class_structure():
     print("="*70)
     
     # 读取并解析 search_base.py
-    base_path = "/home/runner/work/BettaFish/BettaFish/MediaEngine/tools/search_base.py"
+    base_path = os.path.join(TOOLS_PATH, "search_base.py")
     
     with open(base_path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -146,7 +150,7 @@ def verify_provider_implementations():
         "DuckDuckGoSearchProvider": "search_duckduckgo.py"
     }
     
-    base_path = "/home/runner/work/BettaFish/BettaFish/MediaEngine/tools"
+    base_path = TOOLS_PATH
     
     for provider_name, filename in providers.items():
         filepath = os.path.join(base_path, filename)
@@ -183,7 +187,7 @@ def verify_factory_pattern():
     print("5. 验证工厂模式实现")
     print("="*70)
     
-    filepath = "/home/runner/work/BettaFish/BettaFish/MediaEngine/tools/search_factory.py"
+    filepath = os.path.join(TOOLS_PATH, "search_factory.py")
     
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -215,8 +219,8 @@ def verify_documentation():
     print("="*70)
     
     docs = {
-        "分析报告": "/home/runner/work/BettaFish/BettaFish/SEARCH_API_ANALYSIS.md",
-        "使用指南": "/home/runner/work/BettaFish/BettaFish/SEARCH_PROVIDER_GUIDE.md"
+        "分析报告": os.path.join(SCRIPT_DIR, "SEARCH_API_ANALYSIS.md"),
+        "使用指南": os.path.join(SCRIPT_DIR, "SEARCH_PROVIDER_GUIDE.md")
     }
     
     for doc_name, doc_path in docs.items():
