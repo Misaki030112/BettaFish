@@ -11,6 +11,7 @@ from .search_bocha import BochaSearchProvider
 def create_search_provider(
     provider_type: str = "bocha",
     api_key: Optional[str] = None,
+    region: Optional[str] = None,
     **kwargs
 ) -> SearchProviderBase:
     """
@@ -22,6 +23,11 @@ def create_search_provider(
             - "serpapi": SerpAPI (Google Search)
             - "duckduckgo": DuckDuckGo Instant Answer（免费）
         api_key: API 密钥（某些提供商需要）
+        region: 搜索地区代码（仅 SerpAPI 支持）
+            - "us": 美国（推荐用于全球化搜索）
+            - "cn": 中国
+            - "uk": 英国
+            - None: 不限制地区（最全球化）
         **kwargs: 额外的配置参数
         
     Returns:
@@ -37,7 +43,7 @@ def create_search_provider(
     
     elif provider_type == "serpapi":
         from .search_serpapi import SerpAPISearchProvider
-        return SerpAPISearchProvider(api_key=api_key)
+        return SerpAPISearchProvider(api_key=api_key, region=region)
     
     elif provider_type == "duckduckgo":
         from .search_duckduckgo import DuckDuckGoSearchProvider

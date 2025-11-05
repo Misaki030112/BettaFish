@@ -129,10 +129,18 @@ provider = create_search_provider(
 # 创建 DuckDuckGo 提供商（免费）
 provider = create_search_provider(provider_type="duckduckgo")
 
-# 创建 SerpAPI 提供商
+# 创建 SerpAPI 提供商（全球搜索，推荐）
 provider = create_search_provider(
     provider_type="serpapi",
-    api_key="your_serpapi_key"
+    api_key="your_serpapi_key",
+    region="us"  # 美国地区，获取全球化结果
+)
+
+# 创建 SerpAPI 提供商（不限制地区，最全球化）
+provider = create_search_provider(
+    provider_type="serpapi",
+    api_key="your_serpapi_key",
+    region=None  # 不限制地区
 )
 
 # 执行搜索
@@ -451,6 +459,101 @@ for provider_type, kwargs in providers:
         
     except Exception as e:
         print(f"错误: {e}")
+```
+
+---
+
+## 全球搜索与中文输出
+
+### 语言处理机制
+
+BettaFish 系统支持**全球搜索 + 中文输出**的工作模式：
+
+```
+英文搜索结果 → LLM (DeepSeek/OpenAI) → 中文分析报告
+  (全球范围)        (理解英文)         (输出中文)
+```
+
+#### 工作原理
+
+1. **搜索引擎获取全球信息**
+   - Tavily: 默认全球搜索
+   - SerpAPI: 可配置地区（推荐 `region="us"` 或 `region=None`）
+   - Bocha: 多模态搜索
+
+2. **LLM 自动语言转换**
+   - 所有提示词都明确要求："文字请使用中文"
+   - LLM 理解英文内容，用中文表达分析
+   - 无需额外翻译 API
+
+3. **无"黑科技"，依赖标准能力**
+   - ✅ LLM 的多语言理解能力
+   - ✅ 提示词中的语言约束
+   - ✅ 一步到位，质量更高
+
+### SerpAPI 地区配置
+
+为获取全球化的搜索结果，推荐配置：
+
+```python
+# 方案 1: 美国地区（推荐，平衡全球化和质量）
+provider = create_search_provider(
+    provider_type="serpapi",
+    api_key="your_key",
+    region="us"  # 美国地区
+)
+
+# 方案 2: 不限制地区（最全球化）
+provider = create_search_provider(
+    provider_type="serpapi",
+    api_key="your_key",
+    region=None  # 无地区限制
+)
+
+# 方案 3: 中国地区（偏向中文内容）
+provider = create_search_provider(
+    provider_type="serpapi",
+    api_key="your_key",
+    region="cn"  # 中国地区
+)
+```
+
+**地区参数说明**：
+- `region="us"`: 获取国际新闻和全球化内容（推荐）
+- `region="cn"`: 偏向中国本地内容
+- `region="uk"`: 英国地区
+- `region=None`: 完全不限制地区（最全球化）
+
+**注意**：无论选择哪个地区，LLM 都会用中文输出分析报告。
+
+### 配置示例
+
+在 `config.py` 中添加：
+
+```python
+# 搜索提供商配置
+MEDIA_ENGINE_SEARCH_PROVIDER = "serpapi"  # 使用 SerpAPI
+
+# SerpAPI 配置
+SERPAPI_API_KEY = "your_serpapi_key"
+SERPAPI_REGION = "us"  # 或 None, "cn", "uk" 等
+```
+
+在代码中使用：
+
+```python
+from MediaEngine.tools import create_search_provider
+import config
+
+provider = create_search_provider(
+    provider_type=config.MEDIA_ENGINE_SEARCH_PROVIDER,
+    api_key=config.SERPAPI_API_KEY,
+    region=getattr(config, 'SERPAPI_REGION', 'us')
+)
+
+# 搜索全球新闻，获得中文分析
+result = provider.comprehensive_search("latest AI developments")
+# LLM 会理解英文搜索结果，生成中文分析报告
 ```
 
 ---

@@ -30,14 +30,22 @@ class SerpAPISearchProvider(SearchProviderBase):
     1. 安装依赖：pip install google-search-results
     2. 申请 API Key：https://serpapi.com/
     3. 设置环境变量或传入 api_key
+    
+    地区设置说明：
+    - region="us": 美国地区，获取全球化的搜索结果（推荐用于国际新闻）
+    - region="cn": 中国地区，偏向中文内容
+    - region="uk": 英国地区
+    - region=None: 不限制地区（最全球化）
     """
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, region: Optional[str] = None):
         """
         初始化 SerpAPI 搜索提供商
         
         Args:
             api_key: SerpAPI 密钥，若不提供则从环境变量读取
+            region: 搜索地区代码（如 "us", "cn", "uk"），默认为 "us"
+                   设置为 None 可获取最全球化的结果
         """
         if GoogleSearch is None:
             raise ImportError(
@@ -54,6 +62,8 @@ class SerpAPISearchProvider(SearchProviderBase):
                 )
         
         self.api_key = api_key
+        # 默认使用美国地区获取全球化结果，None 表示不限制地区
+        self.region = region if region is not None else "us"
     
     def _parse_serpapi_results(self, results: dict, query: str) -> UnifiedSearchResponse:
         """
@@ -123,15 +133,22 @@ class SerpAPISearchProvider(SearchProviderBase):
         return response
     
     def comprehensive_search(self, query: str, max_results: int = 10) -> UnifiedSearchResponse:
-        """全面综合搜索"""
+        """
+        全面综合搜索
+        
+        注意：搜索结果可能包含英文内容，但 LLM 会根据提示词要求输出中文分析
+        """
         params = {
             "q": query,
             "api_key": self.api_key,
             "engine": "google",
             "num": max_results,
-            "gl": "cn",  # 中国地区
-            "hl": "zh-cn"  # 中文
         }
+        
+        # 只有明确指定地区时才添加 gl 参数
+        # 不设置 gl 和 hl 可以获得最全球化的搜索结果
+        if self.region:
+            params["gl"] = self.region
         
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -144,16 +161,21 @@ class SerpAPISearchProvider(SearchProviderBase):
         return self.comprehensive_search(query, max_results)
     
     def search_for_structured_data(self, query: str) -> UnifiedSearchResponse:
-        """结构化数据查询"""
-        # 对于结构化数据，重点关注答案框和知识图谱
+        """
+        结构化数据查询
+        
+        对于结构化数据，重点关注答案框和知识图谱
+        """
         params = {
             "q": query,
             "api_key": self.api_key,
             "engine": "google",
             "num": 5,
-            "gl": "cn",
-            "hl": "zh-cn"
         }
+        
+        # 只有明确指定地区时才添加 gl 参数
+        if self.region:
+            params["gl"] = self.region
         
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -167,10 +189,12 @@ class SerpAPISearchProvider(SearchProviderBase):
             "api_key": self.api_key,
             "engine": "google",
             "num": 10,
-            "gl": "cn",
-            "hl": "zh-cn",
             "tbs": "qdr:d"  # 过去一天
         }
+        
+        # 只有明确指定地区时才添加 gl 参数
+        if self.region:
+            params["gl"] = self.region
         
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -184,10 +208,12 @@ class SerpAPISearchProvider(SearchProviderBase):
             "api_key": self.api_key,
             "engine": "google",
             "num": 10,
-            "gl": "cn",
-            "hl": "zh-cn",
             "tbs": "qdr:w"  # 过去一周
         }
+        
+        # 只有明确指定地区时才添加 gl 参数
+        if self.region:
+            params["gl"] = self.region
         
         search = GoogleSearch(params)
         results = search.get_dict()
