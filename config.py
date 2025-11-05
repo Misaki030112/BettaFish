@@ -4,11 +4,11 @@
 # =========================
 # Database configuration
 # =========================
-DB_HOST = "your_database_host"
+DB_HOST = "127.0.0.1"
 DB_PORT = 3306
-DB_USER = "your_database_user"
-DB_PASSWORD = "your_database_password"
-DB_NAME = "your_database_name"
+DB_USER = "root"
+DB_PASSWORD = "8EMysgyStMFgBYgyFCfBGde/zxtBYI3h"
+DB_NAME = "BettaFish"
 DB_CHARSET = "utf8mb4"
 
 # =========================
@@ -17,9 +17,9 @@ DB_CHARSET = "utf8mb4"
 DEFAULT_LLM_PROVIDER = "deepseek"
 
 # DeepSeek (OpenAI-compatible)
-DEEPSEEK_API_KEY = "your_deepseek_api_key"
-DEEPSEEK_MODEL = "deepseek-chat"
-DEEPSEEK_API_BASE = "https://api.deepseek.com"
+DEEPSEEK_API_KEY = "b1b792bf-d019-497b-a773-18d6a2a24022"
+DEEPSEEK_MODEL = "deepseek-v3-1-terminus"
+DEEPSEEK_API_BASE = "https://ark.cn-beijing.volces.com/api/v3"
 
 # OpenAI
 OPENAI_API_KEY = "your_openai_api_key"
@@ -45,7 +45,7 @@ GUIJI_QWEN3_FORUM_MODEL = "Qwen/Qwen3-235B-A22B-Instruct-2507"
 # =========================
 # External search providers
 # =========================
-TAVILY_API_KEY = "your_tavily_api_key"
+TAVILY_API_KEY = "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"
 
 # Bocha search (kept backward compatible alias)
 BOCHA_API_KEY = "your_bocha_web_search_api_key"
